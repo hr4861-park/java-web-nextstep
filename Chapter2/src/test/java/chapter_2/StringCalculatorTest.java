@@ -16,104 +16,104 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 @DisplayName("Calculator 클래스 테스트의")
 class StringCalculatorTest {
 
-    StringCalculator stringCalculator;
+  StringCalculator stringCalculator;
 
-    @BeforeEach
-    void setUp() {
-        stringCalculator = new StringCalculator();
+  @BeforeEach
+  void setUp() {
+    stringCalculator = new StringCalculator();
+  }
+
+  private static class PositiveNumberGenerator implements ArgumentsProvider {
+
+    @Override
+    public Stream<? extends Arguments> provideArguments(final ExtensionContext context) {
+      return Stream.generate(() -> new Random().nextInt(Integer.MAX_VALUE) + 1)
+          .limit(100)
+          .map(String::valueOf)
+          .map(Arguments::of);
     }
+  }
 
-    private static class PositiveNumberGenerator implements ArgumentsProvider {
+  @Nested
+  @DisplayName("add 메소드는")
+  class DescribeAddMethod {
 
-        @Override
-        public Stream<? extends Arguments> provideArguments(final ExtensionContext context) {
-            return Stream.generate(() -> new Random().nextInt(Integer.MAX_VALUE) + 1)
-                .limit(100)
-                .map(String::valueOf)
-                .map(Arguments::of);
-        }
+    @Nested
+    @DisplayName("null을 입력하면")
+    class ContextCallWithNull {
+
+      @Test
+      @DisplayName("0을 반환한다.")
+      void it_return_0() {
+        assertThat(stringCalculator.add(null)).isZero();
+      }
     }
 
     @Nested
-    @DisplayName("add 메소드는")
-    class DescribeAddMethod {
+    @DisplayName("\"\"를 입력하면")
+    class ContextCallWithEmptyString {
 
-        @Nested
-        @DisplayName("null을 입력하면")
-        class ContextCallWithNull {
-
-            @Test
-            @DisplayName("0을 반환한다.")
-            void it_return_0() {
-                assertThat(stringCalculator.add(null)).isZero();
-            }
-        }
-
-        @Nested
-        @DisplayName("\"\"를 입력하면")
-        class ContextCallWithEmptyString {
-
-            @Test
-            @DisplayName("0을 반환한다.")
-            void it_return_0() {
-                assertThat(stringCalculator.add("")).isZero();
-            }
-        }
-
-        @Nested
-        @DisplayName("숫자 하나를 입력하면")
-        class ContextCallWithNumberOneEach {
-
-            @Test
-            @DisplayName("해당 숫자를 그대로 반환한다.")
-            void it_return_input() {
-                assertThat(stringCalculator.add("6")).isEqualTo(6);
-            }
-        }
-
-        @Nested
-        @DisplayName("쉼표(,)를 구분자로 숫자를 두개 입력하면")
-        class ContextCallWithTwoNumberWithComma {
-
-            @Test
-            @DisplayName("두 수의 합을 반환한다.")
-            void it_return_sum() {
-                assertThat(stringCalculator.add("3,5")).isEqualTo(8);
-            }
-        }
-
-        @Nested
-        @DisplayName("콜론(:)를 구분자로 숫자를 두개 입력하면")
-        class ContextCallWithTwoNumberWithColon {
-
-            @Test
-            @DisplayName("두 수의 합을 반환한다.")
-            void it_return_sum() {
-                assertThat(stringCalculator.add("3:5")).isEqualTo(8);
-            }
-        }
-
-        @Nested
-        @DisplayName("커스텀구분자와 숫자를 두개 입력하면")
-        class ContextCallWithTwoNumberWithCustomDelimeter {
-
-            @Test
-            @DisplayName("두 수의 합을 반환한다.")
-            void it_return_sum() {
-                assertThat(stringCalculator.add("//;\n3;5")).isEqualTo(8);
-            }
-        }
-
-        @Nested
-        @DisplayName("음수를 입력하면")
-        class ContextCallWithNegativeNumber {
-
-            @Test
-            @DisplayName("RuntimeException 을 던진다.")
-            void itThrowRuntimeException() {
-                assertThatThrownBy(() -> stringCalculator.add("-1"))
-                    .isExactlyInstanceOf(RuntimeException.class);
-            }
-        }
+      @Test
+      @DisplayName("0을 반환한다.")
+      void it_return_0() {
+        assertThat(stringCalculator.add("")).isZero();
+      }
     }
+
+    @Nested
+    @DisplayName("숫자 하나를 입력하면")
+    class ContextCallWithNumberOneEach {
+
+      @Test
+      @DisplayName("해당 숫자를 그대로 반환한다.")
+      void it_return_input() {
+        assertThat(stringCalculator.add("6")).isEqualTo(6);
+      }
+    }
+
+    @Nested
+    @DisplayName("쉼표(,)를 구분자로 숫자를 두개 입력하면")
+    class ContextCallWithTwoNumberWithComma {
+
+      @Test
+      @DisplayName("두 수의 합을 반환한다.")
+      void it_return_sum() {
+        assertThat(stringCalculator.add("3,5")).isEqualTo(8);
+      }
+    }
+
+    @Nested
+    @DisplayName("콜론(:)를 구분자로 숫자를 두개 입력하면")
+    class ContextCallWithTwoNumberWithColon {
+
+      @Test
+      @DisplayName("두 수의 합을 반환한다.")
+      void it_return_sum() {
+        assertThat(stringCalculator.add("3:5")).isEqualTo(8);
+      }
+    }
+
+    @Nested
+    @DisplayName("커스텀구분자와 숫자를 두개 입력하면")
+    class ContextCallWithTwoNumberWithCustomDelimeter {
+
+      @Test
+      @DisplayName("두 수의 합을 반환한다.")
+      void it_return_sum() {
+        assertThat(stringCalculator.add("//;\n3;5")).isEqualTo(8);
+      }
+    }
+
+    @Nested
+    @DisplayName("음수를 입력하면")
+    class ContextCallWithNegativeNumber {
+
+      @Test
+      @DisplayName("RuntimeException 을 던진다.")
+      void itThrowRuntimeException() {
+        assertThatThrownBy(() -> stringCalculator.add("-1"))
+            .isExactlyInstanceOf(RuntimeException.class);
+      }
+    }
+  }
 }
