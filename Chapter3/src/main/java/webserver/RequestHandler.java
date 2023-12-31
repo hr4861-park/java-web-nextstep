@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Map;
+import model.HttpMethod;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +38,11 @@ public class RequestHandler extends Thread {
         OutputStream out = connection.getOutputStream()) {
       BufferedReader bufferedReader =
           new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
-      String line = bufferedReader.readLine();
-      String[] splited = line.split(" ");
+      String httpRequest = bufferedReader.readLine();
+      log.info("input: {}", httpRequest);
+
+      HttpMethod method = new HttpMethodFactory().fromHeader(httpRequest);
+      String[] splited = httpRequest.split(" ");
       String path = splited[1];
 
       final String[] urlWithQueryParam = path.split("\\?");
