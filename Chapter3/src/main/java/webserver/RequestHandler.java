@@ -10,8 +10,11 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Map;
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.HttpRequestUtils;
 
 public class RequestHandler extends Thread {
 
@@ -35,10 +38,20 @@ public class RequestHandler extends Thread {
       BufferedReader bufferedReader =
           new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
       String line = bufferedReader.readLine();
-
       String[] splited = line.split(" ");
       String path = splited[1];
 
+      final String[] urlWithQueryParam = path.split("\\?");
+      if (urlWithQueryParam.length >= 1 && ("/user/create".equals(urlWithQueryParam[0]))) {
+        Map<String, String> queryParam = HttpRequestUtils.parseQueryString(urlWithQueryParam[1]);
+        User user =
+            User.of(
+                queryParam.get("userId"),
+                queryParam.get("password"),
+                queryParam.get("name"),
+                queryParam.get("email"));
+        log.info("saved user: {}", user);
+      }
       DataOutputStream dos = new DataOutputStream(out);
       byte[] body = Files.readAllBytes(new File("./Chapter3/webapp" + path).toPath());
       response200Header(dos, body.length);
