@@ -8,13 +8,13 @@ import model.HttpRequest;
 
 public interface HttpRequestProcessor {
 
-    static HttpRequestProcessor createProcessor(HttpRequest request) {
-        if (Objects.requireNonNull(request.method()) == HttpMethod.POST && (request.url().equals("/user/create"))) {
-                return new CreateUserProcessor(request);
-
-        }
-        return new DefaultProcessor(request);
+  static HttpRequestProcessor createProcessor(HttpRequest request) {
+    if (Objects.requireNonNull(request.method()) == HttpMethod.POST
+        && (request.url().equals("/user/create"))) {
+      return new CreateUserProcessor(request);
     }
+    return new DefaultProcessor(request);
+  }
 
-    void process(OutputStream output) throws IOException;
+  void process(OutputStream output) throws IOException;
 }
