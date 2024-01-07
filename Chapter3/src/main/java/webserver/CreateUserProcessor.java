@@ -1,26 +1,23 @@
 package webserver;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Map;
+import java.io.OutputStream;
+import model.HttpRequest;
 import model.User;
-import util.HttpRequestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreateUserProcessor implements HttpRequestProcessor {
 
-  @Override
-  public byte[] getResponse(final String method, final String url) throws IOException {
-    final String[] urlWithQueryParam = url.split("\\?");
-    if (urlWithQueryParam.length >= 1 && ("/user/create".equals(urlWithQueryParam[0]))) {
-      Map<String, String> queryParam = HttpRequestUtils.parseQueryString(urlWithQueryParam[1]);
-      User user =
-          User.of(
-              queryParam.get("userId"),
-              queryParam.get("password"),
-              queryParam.get("name"),
-              queryParam.get("email"));
+    private static final Logger logger = LoggerFactory.getLogger(CreateUserProcessor.class);
+    private final HttpRequest request;
+
+    public CreateUserProcessor(HttpRequest request) {
+        this.request = request;
     }
-    return Files.readAllBytes(new File("./Chapter3/webapp" + url).toPath());
-  }
+
+    @Override
+    public void process(final OutputStream output) {
+        User user = User.fromMap(request.body());
+        logger.info("Create user: {}", user);
+    }
 }

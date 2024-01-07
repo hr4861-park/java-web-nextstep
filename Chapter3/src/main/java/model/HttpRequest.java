@@ -1,24 +1,42 @@
 package model;
 
-import java.util.Arrays;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import util.HttpRequestUtils;
+import util.IOUtils;
 
-public enum HttpRequest {
-  DEFAULT("", ""),
-  CREATE_USER("POST", "/user/create");
+public record HttpRequest(HttpMethod method, String url, Map<String, String> headers, Map<String, String> body) {
 
-  private final String method;
-  private final String url;
+    public static HttpRequest fromStreams(BufferedReader stream) throws IOException {
+        String request = stream.readLine();
+        final String[] split = request.split(" ");
+        Map<String, String> headers = getHeaders(stream);
+        Map<String, String> bodies = getBodies(stream, headers);
+        return new HttpRequest(HttpMethod.valueOf(split[0]), split[1], headers, bodies);
+    }
 
-  HttpRequest(String method, String url) {
-    this.method = method;
-    this.url = url;
-  }
+    private static Map<String, String> getBodies(final BufferedReader stream,
+        final Map<String, String> headers) throws IOException {
+        Map<String, String> bodies = new HashMap<>();
+        if (headers.containsKey("Content-Length")) {
+            int length = Integer.parseInt(headers.get("Content-Length"));
+            String bodyString = IOUtils.readData(stream, length);
+            bodies = HttpRequestUtils.parseQueryString(bodyString);
+        }
+        return bodies;
+    }
 
-  public static HttpRequest fromHttpRequest(String method, String url) {
+    private static Map<String, String> getHeaders(final BufferedReader stream) throws IOException {
+        Map<String, String> headers = new HashMap<>();
+        String header = stream.readLine();
+        while (!header.isEmpty()) {
+            final String[] splitedHeader = header.split(":");
+            headers.put(splitedHeader[0].trim(), splitedHeader[1].trim());
+            header = stream.readLine();
+        }
+        return headers;
+    }
 
-    return Arrays.stream(values())
-        .filter(x -> x.url.equals(url) && x.method.equals(method))
-        .findFirst()
-        .orElse(DEFAULT);
-  }
 }
