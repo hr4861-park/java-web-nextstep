@@ -1,5 +1,6 @@
 package webserver;
 
+import db.DataBase;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -21,6 +22,7 @@ public class CreateUserProcessor implements HttpRequestProcessor {
   public void process(final OutputStream output) {
     User user = User.fromMap(request.body());
     logger.info("Create user: {}", user);
+    DataBase.addUser(user);
     try (DataOutputStream stream = new DataOutputStream(output)) {
       stream.writeBytes("HTTP/1.1 302 Redirect \r\n");
       stream.writeBytes("Location: /index.html \r\n");
