@@ -1,47 +1,32 @@
 package next.dao;
 
+import core.jdbc.ConnectionManager;
+import core.jdbc.InsertJdbcTemplate;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
-
-import core.jdbc.ConnectionManager;
 import next.model.User;
 
 public class UserDao {
-    public void insert(User user) throws SQLException {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        try {
-            con = ConnectionManager.getConnection();
-            String sql = createQueryForInsert();
-            pstmt = con.prepareStatement(sql);
-            setValuesForInsert(pstmt, user.getUserId(), user.getPassword(), user.getName(), user.getEmail());
-            pstmt.executeUpdate();
-        } finally {
-            if (pstmt != null) {
-                pstmt.close();
-            }
 
-            if (con != null) {
-                con.close();
-            }
-        }
-    }
-
-    private static void setValuesForInsert(final PreparedStatement pstmt, final String user, final String user1,
-        final String user2, final String user3) throws SQLException {
-        pstmt.setString(1, user);
-        pstmt.setString(2, user1);
-        pstmt.setString(3, user2);
-        pstmt.setString(4, user3);
-    }
-
-    private static String createQueryForInsert() {
+    public String createQueryForInsert() {
         String sql = "INSERT INTO USERS VALUES (?, ?, ?, ?)";
         return sql;
+    }
+
+    public void insert(User user) throws SQLException {
+        InsertJdbcTemplate insertJdbcTemplate = new InsertJdbcTemplate();
+        insertJdbcTemplate.insert(user, this);
+    }
+
+    public void setValuesForInsert(final PreparedStatement pstmt, User user) throws SQLException {
+        pstmt.setString(1, user.getUserId());
+        pstmt.setString(2, user.getPassword());
+        pstmt.setString(3, user.getName());
+        pstmt.setString(4, user.getEmail());
     }
 
     public void update(User user) throws SQLException {
@@ -81,7 +66,7 @@ public class UserDao {
             User user = null;
             if (rs.next()) {
                 user = new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"),
-                        rs.getString("email"));
+                    rs.getString("email"));
             }
 
             return user;
