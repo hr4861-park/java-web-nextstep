@@ -6,16 +6,20 @@ import java.sql.SQLException;
 import next.dao.UserDao;
 import next.model.User;
 
-public class InsertJdbcTemplate {
+public abstract class InsertJdbcTemplate {
 
     public void insert(User user, UserDao userDao) throws SQLException {
         final PreparedStatement preparedStatement;
         try (Connection connection = ConnectionManager.getConnection()) {
-            final String sql = userDao.createQueryForInsert();
+            final String sql = createQueryForInsert();
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.executeUpdate();
-            userDao.setValuesForInsert(preparedStatement, user);
+            setValuesForInsert(user, preparedStatement);
             preparedStatement.close();
         }
     }
+
+    protected abstract String createQueryForInsert();
+
+    protected abstract void setValuesForInsert(User user, PreparedStatement preparedStatement) throws SQLException;
 }
