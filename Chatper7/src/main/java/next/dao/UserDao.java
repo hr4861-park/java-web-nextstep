@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import core.jdbc.ConnectionManager;
@@ -40,8 +41,17 @@ public class UserDao {
     }
 
     public List<User> findAll() throws SQLException {
-        // TODO 구현 필요함.
-        return new ArrayList<User>();
+        final Connection connection = ConnectionManager.getConnection();
+        String sql = "SELECT userId, password, name, email FROM USERS";
+        final PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        final ResultSet resultSet = preparedStatement.executeQuery();
+        List<User> result = new LinkedList<>();
+        while (resultSet.next()) {
+            result.add(
+                new User(resultSet.getString("userId"), resultSet.getString("password"), resultSet.getString("name"),
+                    resultSet.getString("email")));
+        }
+        return result;
     }
 
     public User findByUserId(String userId) throws SQLException {
