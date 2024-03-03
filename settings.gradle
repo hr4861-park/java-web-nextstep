@@ -3,5 +3,4 @@ rootProject.name = 'java_web_next_step'
 include 'Chapter2'
 include 'Chapter3'
 include 'Chapter5'
-include 'Chapter6-2'
 
