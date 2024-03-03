@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,13 +16,9 @@ public class UserDao {
         PreparedStatement pstmt = null;
         try {
             con = ConnectionManager.getConnection();
-            String sql = "INSERT INTO USERS VALUES (?, ?, ?, ?)";
+            String sql = createQueryForInsert();
             pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, user.getUserId());
-            pstmt.setString(2, user.getPassword());
-            pstmt.setString(3, user.getName());
-            pstmt.setString(4, user.getEmail());
-
+            setValuesForInsert(pstmt, user.getUserId(), user.getPassword(), user.getName(), user.getEmail());
             pstmt.executeUpdate();
         } finally {
             if (pstmt != null) {
@@ -36,14 +31,24 @@ public class UserDao {
         }
     }
 
+    private static void setValuesForInsert(final PreparedStatement pstmt, final String user, final String user1,
+        final String user2, final String user3) throws SQLException {
+        pstmt.setString(1, user);
+        pstmt.setString(2, user1);
+        pstmt.setString(3, user2);
+        pstmt.setString(4, user3);
+    }
+
+    private static String createQueryForInsert() {
+        String sql = "INSERT INTO USERS VALUES (?, ?, ?, ?)";
+        return sql;
+    }
+
     public void update(User user) throws SQLException {
         final Connection connection = ConnectionManager.getConnection();
         String sql = "UPDATE USERS set password = ?, name = ?, email = ? WHERE userId = ?";
         final PreparedStatement preparedStatement = connection.prepareStatement(sql);
-        preparedStatement.setString(1, user.getPassword());
-        preparedStatement.setString(2, user.getName());
-        preparedStatement.setString(3, user.getEmail());
-        preparedStatement.setString(4, user.getUserId());
+        setValuesForInsert(preparedStatement, user.getPassword(), user.getName(), user.getEmail(), user.getUserId());
         preparedStatement.executeUpdate();
     }
 
