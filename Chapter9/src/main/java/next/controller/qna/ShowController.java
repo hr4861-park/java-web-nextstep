@@ -13,8 +13,8 @@ import core.mvc.AbstractController;
 import core.mvc.ModelAndView;
 
 public class ShowController extends AbstractController {
-    private QuestionDao questionDao = new QuestionDao();
-    private AnswerDao answerDao = new AnswerDao();
+    private QuestionDao questionDao = QuestionDao.getInstance();
+    private AnswerDao answerDao = AnswerDao.getInstance();
     private Question question;
     private List<Answer> answers;
 

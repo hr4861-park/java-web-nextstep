@@ -11,7 +11,7 @@ import next.model.User;
 
 public class CreateQuestionController extends AbstractController {
 
-    private final QuestionDao questionDao = new QuestionDao();
+    private final QuestionDao questionDao = QuestionDao.getInstance();
 
     @Override
     public ModelAndView execute(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
