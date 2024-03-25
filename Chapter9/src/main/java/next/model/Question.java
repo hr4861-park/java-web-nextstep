@@ -3,16 +3,13 @@ package next.model;
 import java.util.Date;
 
 public class Question {
+
     private long questionId;
 
     private String writer;
-
     private String title;
-
     private String contents;
-
     private Date createdDate;
-
     private int countOfComment;
 
     public Question(String writer, String title, String contents) {
@@ -20,7 +17,7 @@ public class Question {
     }
 
     public Question(long questionId, String writer, String title, String contents, Date createdDate,
-            int countOfComment) {
+        int countOfComment) {
         this.questionId = questionId;
         this.writer = writer;
         this.title = title;
@@ -41,8 +38,16 @@ public class Question {
         return title;
     }
 
+    public void setTitle(final String title) {
+        this.title = title;
+    }
+
     public String getContents() {
         return contents;
+    }
+
+    public void setContents(final String contents) {
+        this.contents = contents;
     }
 
     public Date getCreatedDate() {
@@ -60,7 +65,7 @@ public class Question {
     @Override
     public String toString() {
         return "Question [questionId=" + questionId + ", writer=" + writer + ", title=" + title + ", contents="
-                + contents + ", createdDate=" + createdDate + ", countOfComment=" + countOfComment + "]";
+            + contents + ", createdDate=" + createdDate + ", countOfComment=" + countOfComment + "]";
     }
 
     @Override
@@ -73,15 +78,19 @@ public class Question {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         Question other = (Question) obj;
-        if (questionId != other.questionId)
+        if (questionId != other.questionId) {
             return false;
+        }
         return true;
     }
 }
